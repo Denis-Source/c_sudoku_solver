@@ -1,11 +1,12 @@
 #include "board.h"
 #include <stdlib.h>
 #include <stdbool.h>
+#include "../arena/arena.h"
 
 
-Board initialize_board(int *array) {
-    Board *board = (Board *) malloc(sizeof(Board));
-    board->_field = (int *) malloc(BOARD_SIZE * BOARD_SIZE * sizeof(int));
+Board initialize_board(const int *array, Arena *arena) {
+    Board *board = (Board *) alloc_arena(arena, sizeof(Board));
+    board->_field = (int *) alloc_arena(arena, BOARD_SIZE * BOARD_SIZE * sizeof(int));
 
     if (board == NULL) exit(-1); // Unable to allocate board
     if (board->_field == NULL) exit(-1); // Unable to allocate field
@@ -18,13 +19,8 @@ Board initialize_board(int *array) {
     return *board;
 }
 
-Board copy_board(Board *board) {
-    return initialize_board(board->_field);
-}
-
-void free_board(Board *board) {
-    free(board->_field);
-    free(board);
+Board copy_board(Board *board, Arena *arena) {
+    return initialize_board(board->_field, arena);
 }
 
 bool access_board(Board *board, int x, int y, int *result) {

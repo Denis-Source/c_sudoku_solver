@@ -13,8 +13,6 @@ typedef struct {
 
 CheckTable initialize_check_table();
 
-bool check_board(CheckTable *check_table, Board *board, int x, int y);
-
-bool solve_board(Board *initial_board);
+bool solve_board(Board *initial_board, Arena *arena);
 
 #endif //SUDOKU_SOLVER_SOLVER_H

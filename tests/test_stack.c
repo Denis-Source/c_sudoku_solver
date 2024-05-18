@@ -15,7 +15,8 @@ void test_initialize_board_stack_success(void) {
 
 void test_push_stack_success(void) {
     BoardStack stack = initialize_board_stack(TEST_STACK_SIZE);
-    Board board = initialize_board(empty_board_field);
+    Arena arena = initialize_arena(BOARD_MEM_SIZE);
+    Board board = initialize_board(easy_board_field, &arena);
 
     bool success = push_board_stack(&stack, &board);
 
@@ -24,31 +25,34 @@ void test_push_stack_success(void) {
     assert(stack._storage[0]._field == board._field); // Incorrect value
 
     free_stack(&stack);
-    free_board(&board);
+    free_arena(&arena);
 }
 
 void test_push_stack_overflow(void) {
     BoardStack stack = initialize_board_stack(TEST_STACK_SIZE);
+    Arena arena = initialize_arena(BOARD_MEM_SIZE * (TEST_STACK_SIZE + 1));
+
 
     for (int i = 0; i < TEST_STACK_SIZE; i++) {
-        Board board = initialize_board(empty_board_field);
+        Board board = initialize_board(easy_board_field, &arena);
         push_board_stack(&stack, &board);
-        free_board(&board);
+        free_arena(&arena);
     }
 
-    Board board = initialize_board(empty_board_field);
+    Board board = initialize_board(easy_board_field, &arena);
     bool success = push_board_stack(&stack, &board);
     assert(!success); // Operation is unsuccessful
     assert(stack.top != TEST_STACK_SIZE); // Stack is moved
     assert(&stack._storage[TEST_STACK_SIZE] != &board); // Stack value changed
 
     free_stack(&stack);
-    free_board(&board);
+    free_arena(&arena);
 }
 
 void test_pop_stack_success_first_value(void) {
     BoardStack stack = initialize_board_stack(TEST_STACK_SIZE);
-    Board board = initialize_board(empty_board_field);
+    Arena arena = initialize_arena(BOARD_MEM_SIZE);
+    Board board = initialize_board(easy_board_field, &arena);
     Board result;
     push_board_stack(&stack, &board);
 
@@ -59,13 +63,16 @@ void test_pop_stack_success_first_value(void) {
     assert(stack.top == STACK_EMPTY); // Top address is not reset
 
     free_stack(&stack);
-    free_board(&board);
+    free_arena(&arena);
 }
 
 void test_pop_stack_success_second_value(void) {
     BoardStack stack = initialize_board_stack(TEST_STACK_SIZE);
-    Board board = initialize_board(empty_board_field);
-    Board another_board = initialize_board(empty_board_field);
+
+    Arena arena = initialize_arena(BOARD_MEM_SIZE * 2);
+
+    Board board = initialize_board(easy_board_field, &arena);
+    Board another_board = initialize_board(empty_board_field, &arena);
     Board result;
 
     push_board_stack(&stack, &board);
@@ -78,7 +85,7 @@ void test_pop_stack_success_second_value(void) {
     assert(stack.top == 0); // Top address is not correct
 
     free_stack(&stack);
-    free_board(&board);
+    free_arena(&arena);
 }
 
 void test_pop_stack_underflow(void) {
